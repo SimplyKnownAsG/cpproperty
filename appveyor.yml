@@ -1,0 +1,13 @@
+version: '{build}'
+
+configuration:
+  - Release
+
+before_build:
+  cmd: |
+    cmake -Bbuild -H.
+
+build_script:
+  cmd: |
+    cmake --build build
+

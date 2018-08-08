@@ -1,0 +1,15 @@
+language: cpp
+
+compiler:
+  - g++
+  - clang++
+
+matrix:
+  include:
+    - os: linux
+    - os: osx
+
+script:
+  - cmake -H. -Bbuild -DCMAKE_VERBOSE_MAKEFILE=ON
+  - cmake --build build
+
