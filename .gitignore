@@ -14,11 +14,7 @@ __pycache__/
 release/
 build/
 debug/
-cwap.py
-*_wrap*
-cwap/cwap.hpp
-cwap/Version.cpp
-catch.hpp
+compile_commands.json
 
 # Compiled files
 *.so
@@ -27,8 +23,6 @@ catch.hpp
 *.exp
 *.lib
 *.exe
-
-googletest/
 
 # Unit test / coverage reports
 htmlcov/

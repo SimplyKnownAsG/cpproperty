@@ -1,5 +1,6 @@
 #pragma once
 
+#include <ostream>
 #include <string>
 
 namespace cpproperty {
@@ -94,5 +95,26 @@ public:                                                                         
 
         GETTER_SETTTER(public, PUBLIC);
         GETTER_SETTTER(protected, PROTECTED);
+    };
+
+#undef OP_USE
+#define OP_USE(name, op)                                                                           \
+    template<typename Parent, typename T, Access getter, Access setter>                            \
+    typename std::enable_if<(getter == PUBLIC) && (detail::has_operator<T>::name), T>::type        \
+    operator op(const T& val, Property<Parent, T, getter, setter>& prop) {                         \
+        return prop op val;                                                                        \
+    };
+
+    OP_USE(add, +);
+    OP_USE(sub, -);
+    OP_USE(mul, *);
+    OP_USE(div, /);
+
+    template<typename Parent, typename T, Access getter, Access setter>
+    typename std::enable_if<(getter == PUBLIC), std::ostream>::type& operator<<(
+            std::ostream& stream,
+            Property<Parent, T, getter, setter>& prop) {
+        stream << (T)prop;
+        return stream;
     };
 }
