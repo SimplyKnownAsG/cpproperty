@@ -11,15 +11,11 @@ class Person {
 public:
     Property<Person, int, cpproperty::PUBLIC, cpproperty::PUBLIC> age;
 
-    /* Property<Person, std::string, cpproperty::PUBLIC, cpproperty::PROTECTED> name; */
+    Property<Person, std::string, cpproperty::PUBLIC, cpproperty::PUBLIC> name;
 
     Person()
-      : age(this) {}
-    /* , name(this){}; */
-
-    /* void setName(std::string name) { */
-    /*     this->name.value = name; */
-    /* }; */
+      : age(this)
+      , name(this){};
 };
 
 TEST_CASE("example", "[example]") {
@@ -51,11 +47,11 @@ TEST_CASE("example", "[example]") {
         p.age /= 2;
         REQUIRE(3 == p.age);
     }
-    /* SECTION("strings") { */
-    /*     p.setName("hello"); */
-    /* REQUIRE((p.name == "hello")); */
+    SECTION("strings") {
+        p.name = "hello";
+        REQUIRE((p.name == "hello"));
 
-    // compiler error
-    /* p.name = "goodbye"; */
-    /* } */
+        // compiler error
+        p.name = "goodbye";
+    }
 }

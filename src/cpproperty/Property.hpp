@@ -50,8 +50,8 @@ public:                                                                         
             return this->value == that;
         };
 
-        friend bool operator==(const T& that, const Property<Parent, T, getter, setter>& self) {
-            return that == self.value;
+        friend bool operator==(const T& that, Property<Parent, T, getter, setter>& self) {
+            return that == self.get(self.value);
         };
 
     protected:
@@ -65,27 +65,32 @@ public:                                                                         
 
 #define OP_USE(ACCESS, name, op)                                                                   \
     template<typename T2 = T>                                                                      \
-    typename std::enable_if<(getter == ACCESS) && (detail::has_operator<T>::name), T2>::type       \
+    typename std::enable_if<(getter == ACCESS) && (detail::has_operator<T2>::name), T2>::type      \
     operator op(const T2& val) {                                                                   \
         return this->get(this->value) op val;                                                      \
     };                                                                                             \
                                                                                                    \
     template<typename T2 = T>                                                                      \
-    const typename std::enable_if<(setter == ACCESS) && (detail::has_operator<T>::name),           \
+    const typename std::enable_if<(setter == ACCESS) && (detail::has_operator<T2>::name),          \
                                   T2>::type&                                                       \
     operator op##=(const T2& val) {                                                                \
-        return this->value = this->set(this->value op val);                                        \
+        return this->value = this->set(this->get(this->value) op val);                             \
     };
 
 #define GETTER_SETTTER(access, ACCESS)                                                             \
     access:                                                                                        \
-    template<typename T2 = T>                                                                      \
-    const typename std::enable_if<setter == ACCESS, T2>::type& operator=(T2 val) {                 \
+    /* Cannot use T within this function, but we need it to be the return type  */                 \
+    /* consequently, had to define Treturn=T                                    */                 \
+    /* error without Treturn=T was:                                             */                 \
+    /*      failed requirement '(cpproperty::Access)0U == PROTECTED';           */                 \
+    /*      'enable_if' cannot be used to disable this declaration              */                 \
+    template<typename T2 = T, typename Treturn = T>                                                \
+    const typename std::enable_if<setter == ACCESS, Treturn>::type& operator=(T2 val) {            \
         return this->value = this->set(val);                                                       \
     };                                                                                             \
                                                                                                    \
     template<typename T2 = T>                                                                      \
-    operator const typename std::enable_if<setter == ACCESS, T2>::type&() {                        \
+    operator const typename std::enable_if<getter == ACCESS, T2>::type&() {                        \
         return this->get(value);                                                                   \
     };                                                                                             \
     OP_USE(ACCESS, add, +);                                                                        \
