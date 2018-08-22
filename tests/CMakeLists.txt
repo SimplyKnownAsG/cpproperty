@@ -7,6 +7,7 @@ file(GLOB TEST_SOURCES
         ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
 
 # Make test executable
+enable_testing()
 add_executable(cpproperty_tests ${TEST_SOURCES})
 
 target_link_libraries(cpproperty_tests cpproperty)
@@ -17,8 +18,8 @@ target_include_directories(cpproperty_tests
                 ${CMAKE_BINARY_DIR}/3rd-party/include)
 
 # the ctest thing is far too complicated...
-add_custom_command(
-        TARGET cpproperty_tests
-        POST_BUILD
-        COMMAND $<TARGET_FILE:cpproperty_tests>)
+
+add_test(NAME cpppropertyTests
+         COMMAND cpproperty_tests
+         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 

@@ -11,3 +11,7 @@ build_script:
   cmd: |
     cmake --build build
 
+test_script:
+  cmd: |
+    cd build
+    ctest
