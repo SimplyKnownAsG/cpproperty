@@ -32,6 +32,11 @@ public:                                                                         
     class Property {
     private:
         friend Parent;
+
+        /* template<typename Parent2, typename S, Access getter2, Access setter2> */
+        /* friend class std::enable_if<std::is_same<Parent2, Parent>::value, */
+        /*                             Property<Parent2, S, getter2, setter2>>::type; */
+
         Parent* self;
 
         T value;
@@ -39,9 +44,14 @@ public:                                                                         
         Property(Parent* self)
           : self(self){};
 
+        Property(Parent* self, T val)
+          : self(self) {
+            this->value = this->set(val);
+        };
+
         Property(Property&& that)
           : self(that.self)
-          , value(that.value) {}
+          , value(that.value){};
 
     public:
         virtual ~Property(){};
@@ -50,9 +60,15 @@ public:                                                                         
             return this->value == that;
         };
 
-        friend bool operator==(const T& that, Property<Parent, T, getter, setter>& self) {
-            return that == self.get(self.value);
-        };
+        /** XXX: OPERATOR_STREAM
+         *
+         * this overload does not currently appear to be necessary.  I'm not sure if it will work
+         * for all compilers to cast to the type for operator<<. It appears to on OSX/clang.
+         */
+        /* template<typename Parent2, typename S, Access getter2, Access setter2> */
+        /* friend typename std::enable_if<getter == PUBLIC, std::ostream>::type& operator<<( */
+        /*         std::ostream& stream, */
+        /*         Property<Parent2, S, getter2, setter2>& p); */
 
     protected:
         virtual T set(T val) {
@@ -115,11 +131,11 @@ public:                                                                         
     OP_USE(mul, *);
     OP_USE(div, /);
 
-    template<typename Parent, typename T, Access getter, Access setter>
-    typename std::enable_if<(getter == PUBLIC), std::ostream>::type& operator<<(
-            std::ostream& stream,
-            Property<Parent, T, getter, setter>& prop) {
-        stream << (T)prop;
-        return stream;
-    };
+    /** XXX: search OPERATOR_STREAM
+     */
+    /* template<typename Parent, typename T, Access getter, Access setter> */
+    /* std::ostream& operator<<(std::ostream& stream, Property<Parent, T, getter, setter>& p) { */
+    /*     stream << p.get(p.value); */
+    /*     return stream; */
+    /* }; */
 }
